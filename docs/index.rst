@@ -109,13 +109,9 @@ This documentation section is automatically generated from Flask-IIIF's
 source code.
 
 Flask-IIIF
-^^^^^^^^^
+^^^^^^^^^^
 
 .. automodule:: flask_iiif
-
-.. autoclass:: IIIF
-   :members:
-
 
 .. include:: ../CHANGES
 
