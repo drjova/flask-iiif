@@ -9,40 +9,28 @@
 
 """Multimedia IIIF Image API."""
 
-from flask import current_app, send_file
-from flask.ext.restful import abort, Resource
-from functools import wraps
 from io import BytesIO
+
+from flask import current_app, send_file
+from flask.ext.restful import Resource, abort
+
+from werkzeug import LocalProxy
+
 
 from .api import (
     IIIFImageAPIWrapper
 )
 
-from .errors import (
-    MultimediaError, MultmediaImageCropError, MultmediaImageResizeError,
-    MultimediaImageFormatError, MultimediaImageRotateError,
-    MultimediaImageQualityError, IIIFValidatorError, MultimediaImageNotFound,
-    MultimediaImageForbidden
+from .decorators import (
+    api_decorator, error_handler
 )
 
+from .signals import (
+    iiif_after_process_request, iiif_after_validation,
+    iiif_before_process_request
+)
 
-def error_handler(f):
-    """error handler."""
-    @wraps(f)
-    def inner(*args, **kwargs):
-        """wrap the errors."""
-        try:
-            return f(*args, **kwargs)
-        except (MultmediaImageCropError, MultmediaImageResizeError,
-                MultimediaImageFormatError, MultimediaImageRotateError,
-                MultimediaImageQualityError) as error:
-            abort(500, message=error.message, code=500)
-        except IIIFValidatorError as error:
-            abort(400, message=error.message, code=400)
-        except (MultimediaError, MultimediaImageNotFound,
-                MultimediaImageForbidden) as error:
-            abort(error.code, message=error.message, code=error.code)
-    return inner
+current_iiif = LocalProxy(lambda: current_app.extensions['iiif'])
 
 
 class IIIFImageAPI(Resource):
@@ -68,22 +56,31 @@ class IIIFImageAPI(Resource):
 
     method_decorators = [
         error_handler,
+        api_decorator,
     ]
 
     def get(self, version, uuid, region, size, rotation, quality,
             image_format):
         """Run IIIF Image API workflow."""
-        # Validate IIIF parameters
-        IIIFImageAPIWrapper.validate_api(
+        api_parameters = dict(
             version=version,
+            uuid=uuid,
             region=region,
             size=size,
             rotate=rotation,
             quality=quality,
             image_format=image_format
         )
+        # Trigger event before proccess the api request
+        iiif_before_process_request.send(self, **api_parameters)
 
-        cache_handler = current_app.extensions['iiif'].cache()
+        # Validate IIIF parameters
+        IIIFImageAPIWrapper.validate_api(**api_parameters)
+
+        cache_handler = current_iiif.cache()
+
+        # Trigger event after validation
+        iiif_after_validation.send(self, **api_parameters)
 
         # build the image key
         key = "iiif:{0}/{1}/{2}/{3}/{4}.{5}".format(
@@ -99,7 +96,7 @@ class IIIFImageAPI(Resource):
             to_serve.seek(0)
         # Otherwise build create the image
         else:
-            path = current_app.extensions['iiif'].uuid_to_path(uuid)
+            path = current_iiif.uuid_to_path(uuid)
             image = IIIFImageAPIWrapper.from_file(path)
 
             image.apply_api(
@@ -119,6 +116,9 @@ class IIIFImageAPI(Resource):
         mimetype = current_app.config['IIIF_FORMATS'].get(
             image_format, 'image/jpeg'
         )
+
+        # Trigger event after proccess the api request
+        iiif_after_process_request.send(self, **api_parameters)
         return send_file(to_serve, mimetype=mimetype)
 
     def post(self):
