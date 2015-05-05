@@ -45,7 +45,7 @@ class IIIF(object):
     def __init__(self, app=None):
         """Initialize login callback."""
         self.uuid_to_path = None
-
+        self.api_decorator_callback = None
         if app is not None:
             self.init_app(app)
 
@@ -108,5 +108,20 @@ class IIIF(object):
         """
         self.uuid_to_path = callback
 
+    def api_decorator_handler(self, callback):
+        """Protect API handler.
+
+        .. code-block:: python
+
+            def protect_api():
+                return
+            iiif.api_decorator_handler(protect_api)
+
+        .. note::
+
+            The API would be always decorated with ``api_decorator_handler``.
+            If is not defined, it would just pass.
+        """
+        self.api_decorator_callback = callback
 
 __all__ = ('IIIF', '__version__')
