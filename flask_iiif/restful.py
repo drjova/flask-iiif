@@ -99,8 +99,15 @@ class IIIFImageAPI(Resource):
             to_serve.seek(0)
         # Otherwise build create the image
         else:
-            path = current_app.extensions['iiif'].uuid_to_path(uuid)
-            image = IIIFImageAPIWrapper.from_file(path)
+
+            if current_app.extensions['iiif'].uuid_to_path:
+                path = current_app.extensions['iiif'].uuid_to_path(uuid)
+                image = IIIFImageAPIWrapper.from_file(path)
+            else:
+                bytestream = current_app.extensions['iiif'].uuid_to_bytestream(
+                    uuid
+                )
+                image = IIIFImageAPIWrapper.from_string(bytestream)
 
             image.apply_api(
                 version=version,

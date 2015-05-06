@@ -103,10 +103,18 @@ class IIIF(object):
     def uuid_to_path_handler(self, callback):
         """Set the callback for the ``uuid`` to ``path`` convertion.
 
-        :param callback: The callback for login.
+        :param callback: The callback for convert uuid to path
         :type callback: function
         """
         self.uuid_to_path = callback
+
+    def uuid_to_bytestream_handler(self, callback):
+        """Set the callback for the ``uuid`` to ``bytestream`` convertion.
+
+        :param callback: The callback for convert uuid to bytestream
+        :type callback: function
+        """
+        self.uuid_to_bytestream = callback
 
 
 __all__ = ('IIIF', '__version__')
