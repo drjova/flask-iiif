@@ -45,6 +45,7 @@ class IIIF(object):
     def __init__(self, app=None):
         """Initialize login callback."""
         self.uuid_to_path = None
+        self.uuid_to_bytestream = None
         self.api_decorator_callback = None
         if app is not None:
             self.init_app(app)
@@ -103,10 +104,18 @@ class IIIF(object):
     def uuid_to_path_handler(self, callback):
         """Set the callback for the ``uuid`` to ``path`` convertion.
 
-        :param callback: The callback for login.
+        :param callback: The callback for convert uuid to path
         :type callback: function
         """
         self.uuid_to_path = callback
+
+    def uuid_to_bytestream_handler(self, callback):
+        """Set the callback for the ``uuid`` to ``bytestream`` convertion.
+
+        :param callback: The callback for convert uuid to bytestream
+        :type callback: function
+        """
+        self.uuid_to_bytestream = callback
 
     def api_decorator_handler(self, callback):
         """Protect API handler.

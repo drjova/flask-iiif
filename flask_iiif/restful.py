@@ -94,10 +94,14 @@ class IIIFImageAPI(Resource):
         if cached:
             to_serve = BytesIO(cached)
             to_serve.seek(0)
-        # Otherwise build create the image
+        # Otherwise create the image
         else:
-            path = current_iiif.uuid_to_path(uuid)
-            image = IIIFImageAPIWrapper.from_file(path)
+            if current_iiif.uuid_to_path:
+                path = current_iiif.uuid_to_path(uuid)
+                image = IIIFImageAPIWrapper.from_file(path)
+            else:
+                bytestream = current_iiif.uuid_to_bytestream(uuid)
+                image = IIIFImageAPIWrapper.from_string(bytestream)
 
             image.apply_api(
                 version=version,
