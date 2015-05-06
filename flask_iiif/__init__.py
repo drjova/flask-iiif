@@ -45,6 +45,7 @@ class IIIF(object):
     def __init__(self, app=None):
         """Initialize login callback."""
         self.uuid_to_path = None
+        self.uuid_to_bytestream = None
         self.api_decorator_callback = None
         if app is not None:
             self.init_app(app)
@@ -100,13 +101,26 @@ class IIIF(object):
              "<string:quality>.<string:image_format>"),
         )
 
-    def uuid_to_path_handler(self, callback):
-        """Set the callback for the ``uuid`` to ``path`` convertion.
+    def uuid_to_image_opener_handler(self, callback):
+        """Set the callback for the ``uuid`` to ``image`` cinvertion.
 
-        :param callback: The callback for login.
-        :type callback: function
+        .. note:
+
+            :py:attr:`~flask_iiif.config.IIIF_IMAGE_OPENER` must be
+            configured. If the value of ``IIIF_IMAGE_OPENER`` is
+            ``fullpath`` it will try to create the
+            :py:class:`~flask_iiif.api.IIIFImageAPIWrapper`
+            from the ``fullpath`` else if is ``bytestream`` it will create
+            the object from ``string``.
+
+        .. code-block:: python
+
+            def uuid_to_path(uuid):
+                # do something magical
+
+            iiif.uuid_to_image_opener_handler(uuid_to_path)
         """
-        self.uuid_to_path = callback
+        self.uuid_to_image_opener = callback
 
     def api_decorator_handler(self, callback):
         """Protect API handler.

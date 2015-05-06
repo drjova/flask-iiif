@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of Flask-IIIF
-# Copyright (C) 2014 CERN.
+# Copyright (C) 2014, 2015 CERN.
 #
 # Flask-IIIF is free software; you can redistribute it and/or modify
 # it under the terms of the Revised BSD License; see LICENSE file for
@@ -14,15 +14,15 @@ import math
 import os
 import re
 
-from PIL import Image
 from flask import current_app
+from PIL import Image
 from six import BytesIO
 
 from .errors import (
-    MultmediaImageCropError, MultmediaImageResizeError,
-    MultimediaImageFormatError, MultimediaImageRotateError,
-    MultimediaImageQualityError, MultimediaImageNotFound,
-    IIIFValidatorError
+    IIIFValidatorError, MultimediaImageFormatError,
+    MultimediaImageNotFound, MultimediaImageQualityError,
+    MultimediaImageRotateError, MultmediaImageCropError,
+    MultmediaImageResizeError
 )
 
 
@@ -178,7 +178,7 @@ class MultimediaImage(MultimediaObject):
         else:
             try:
                 width, height = map(int, dimensions.split(','))
-            except:
+            except ValueError:
                 raise MultmediaImageResizeError(
                     "The request must contain width,height sequence"
                 )
@@ -541,3 +541,21 @@ class IIIFImageAPIWrapper(MultimediaImage):
         Apply :func:`~flask_iiif.api.MultimediaImage.quality`.
         """
         self.quality(value)
+
+    @classmethod
+    def open_image(cls, source):
+        """Create an :class:`~flask_iiif.api.MultimediaImage` instance.
+
+        :param str source: The image image string
+        :type source: `BytesIO` object
+        :param str source_type: the type of ``data``
+        :returns: a :class:`~flask_iiif.api.MultimediaImage`
+                  instance
+        """
+        try:
+            image = Image.open(source)
+        except IOError:
+            raise MultimediaImageNotFound(
+                "The requested image not found"
+            )
+        return cls(image)
