@@ -57,7 +57,16 @@
         `IIIF Image API v2 Information request
         <http://iiif.io/api/image/2.0/#information-request>`_
 
+.. py:data:: IIIF_API_IMAGE_RESAMPLE
+
+    An optional resampling filter. This can be one of PIL.Image.NEAREST,
+    PIL.Image.BILINEAR (linear interpolation), PIL.Image.BICUBIC,
+    or PIL.Image.LANCZOS (a high-quality downsampling filter).
+    (Default PIL.Image.ANTIALIAS).
+
 """
+
+from PIL import Image
 
 # Cache handler
 IIIF_CACHE_HANDLER = 'flask_iiif.cache.simple:ImageSimpleCache'
@@ -183,3 +192,6 @@ IIIF_API_INFO_RESPONSE_SKELETON = {
         ]
     }
 }
+
+# Image resample quality
+IIIF_API_IMAGE_RESAMPLE = Image.ANTIALIAS

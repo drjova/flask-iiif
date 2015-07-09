@@ -115,11 +115,10 @@ class MultimediaImage(MultimediaObject):
         image = Image.open(source)
         return cls(image)
 
-    def resize(self, dimensions, resample=Image.NEAREST):
+    def resize(self, dimensions):
         """Resize the image.
 
         :param str dimensions: The dimensions to resize the image
-        :param resample: The algorithm to be used
         :type resample: :py:mod:`PIL.Image` algorithm
 
         .. note::
@@ -192,7 +191,10 @@ class MultimediaImage(MultimediaObject):
                  " been given").format(width, height)
             )
 
-        self.image = self.image.resize((width, height), resample=resample)
+        self.image = self.image.resize(
+            (width, height),
+            resample=current_app.config.get('IIIF_API_IMAGE_RESAMPLE')
+        )
 
     def crop(self, coordinates):
         """Crop the image.
