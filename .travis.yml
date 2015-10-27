@@ -19,14 +19,13 @@ python:
 
 install:
   - "travis_retry pip install --upgrade pip"
-  - "travis_retry pip install coveralls pep257"
+  - "travis_retry pip install coveralls"
   - "travis_retry pip install pytest pytest-pep8 pytest-cov pytest-cache"
   - "travis_retry pip install -e .[docs]"
 
 script:
-  - pep257 flask_iiif
-  - "sphinx-build -qnNW docs docs/_build/html"
-  - python setup.py test
+  - "sphinx-build -qnN docs docs/_build/html"
+  - "python setup.py test"
 
 after_success:
   - coveralls
