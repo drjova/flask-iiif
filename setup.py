@@ -18,10 +18,12 @@ from setuptools.command.test import test as TestCommand
 
 
 class PyTest(TestCommand):
+    """PyTest Test."""
 
     user_options = [('pytest-args=', 'a', 'Arguments to pass to py.test')]
 
     def initialize_options(self):
+        """Init pytest."""
         TestCommand.initialize_options(self)
         try:
             from ConfigParser import ConfigParser
@@ -32,11 +34,13 @@ class PyTest(TestCommand):
         self.pytest_args = config.get("pytest", "addopts").split(" ")
 
     def finalize_options(self):
+        """Finalize pytest."""
         TestCommand.finalize_options(self)
         self.test_args = []
         self.test_suite = True
 
     def run_tests(self):
+        """Run tests."""
         # import here, cause outside the eggs aren't loaded
         import pytest
         errno = pytest.main(self.pytest_args)
@@ -57,6 +61,7 @@ tests_require = [
     'pytest-pep8>=1.0.6',
     'pytest>=2.6.1',
 ]
+
 install_requires = [
     'Flask',
     'Flask-RESTful>=0.2.12',
