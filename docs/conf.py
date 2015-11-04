@@ -1,17 +1,30 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of Flask-IIIF
-# Copyright (C) 2014 CERN.
+# Copyright (C) 2014, 2015 CERN.
 #
 # Flask-IIIF is free software; you can redistribute it and/or modify
 # it under the terms of the Revised BSD License; see LICENSE file for
 # more details.
 
-import sys
+from __future__ import print_function
+
 import os
 import re
+import sys
+
+import sphinx.environment
+from docutils.utils import get_source_line
 
 sys.path.append(os.path.abspath('_themes'))
+
+
+def _warn_node(self, msg, node):
+    """Do not warn on external images."""
+    if 'HTTP Error 404: OK' not in msg:
+        self._warnfunc(msg, '%s:%s' % get_source_line(node))
+
+sphinx.environment.BuildEnvironment.warn_node = _warn_node
 
 
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -43,7 +56,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Flask-IIIF'
-copyright = u'2014, CERN'
+copyright = u'2015, CERN'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the

@@ -62,7 +62,7 @@ install_requires = [
     'Flask-RESTful>=0.2.12',
     'blinker',
     'six',
-    'pillow',
+    'pillow==2.9',
 ]
 
 if tuple(sys.version_info) < (2, 7):

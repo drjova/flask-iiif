@@ -11,7 +11,6 @@
 
 
 class MultimediaError(Exception):
-
     """General multimedia exception."""
 
     def __init__(self, message=None, code=None):
@@ -27,7 +26,6 @@ class MultimediaError(Exception):
 
 
 class MultimediaImageNotFound(MultimediaError):
-
     """Image not found error."""
 
     def __init__(self, message=None, code=None):
@@ -36,30 +34,24 @@ class MultimediaImageNotFound(MultimediaError):
 
 
 class MultimediaImageCropError(MultimediaError):
-
     """Image on crop error."""
 
 
 class MultimediaImageResizeError(MultimediaError):
-
     """Image resize error."""
 
 
 class MultimediaImageRotateError(MultimediaError):
-
     """Image rotate error."""
 
 
 class MultimediaImageQualityError(MultimediaError):
-
     """Image quality error."""
 
 
 class MultimediaImageFormatError(MultimediaError):
-
     """Image format error."""
 
 
 class IIIFValidatorError(MultimediaError):
-
     """IIIF API validator error."""
