@@ -14,22 +14,28 @@ All cache adaptors must at least implement
 :func:`~flask_iiif.cache.cache.ImageCache.set` methods.
 """
 
+from abc import ABCMeta, abstractmethod
+
 
 class ImageCache(object):
-
     """Abstract cache layer."""
+
+    __metaclass__ = ABCMeta
 
     timeout = 60 * 60 * 24 * 2
 
     def __init__(self):
         """Initialize the cache."""
 
+    @abstractmethod
     def get(self, key):
         """Return the key value.
 
         :param string key: the object's key
         """
+        raise NotImplementedError()
 
+    @abstractmethod
     def set(self, key, value, timeout=timeout):
         """Cache the object.
 
@@ -38,9 +44,14 @@ class ImageCache(object):
         :type value: :class:`StringIO.StringIO` object
         :param int timeout: the cache timeout in seconds
         """
+        raise NotImplementedError()
 
+    @abstractmethod
     def delete(self, key):
         """Delete the specific key."""
+        raise NotImplementedError()
 
+    @abstractmethod
     def flush(self):
         """Flush the cache."""
+        raise NotImplementedError()
